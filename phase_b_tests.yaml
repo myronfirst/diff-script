@@ -2,10 +2,10 @@
 tests:
   - id: s_existing_sid
     input: |
-      A 2 0
+      A 2 1
       D 0 10
-      S 0 0
-      S 0 0
+      S 1 0
+    #     S 1 0
     expected:
       - |
         A
@@ -31,9 +31,9 @@ tests:
           Stations [0]
           0
         DONE
-  - id: test1
-    input: |
-      Input for test1.
-    expected:
-      - |
-        Expected output for test1.
+  # - id: test1
+  #   input: |
+  #     Input for test1.
+  #   expected:
+  #     - |
+  #       Expected output for test1.

@@ -27,6 +27,8 @@ END
 
 
 import os
+from re import sub
+import tempfile
 import yaml
 import subprocess
 from dataclasses import dataclass
@@ -132,7 +134,7 @@ Lines = list[str]
 class Test:
     id: str
     input: str
-    output: Lines
+    # output: Lines
     expected: list[Lines]
 
 
@@ -167,38 +169,44 @@ def main():
     def parse_tests(data) -> list[Test]:
         tests = []
         for test_data in data['tests']:
-            test = Test(test_data['id'], test_data['input'], [''],
+            test = Test(test_data['id'], test_data['input'],
                         [parse_project_output(expected_item).splitlines() for expected_item in test_data['expected']])
             tests.append(test)
         return tests
     tests: list[Test] = parse_tests(data)
 
-    for dirpath, dirnames, filenames in os.walk(ROOT):
-        for dirname in dirnames:
-            subdirectory = os.path.join(dirpath, dirname)
+    submissions: list[str] = []
+    for dir_name in os.listdir(ROOT):
+        dir_path = os.path.join(ROOT, dir_name)
+        if not os.path.isdir(dir_path):
+            continue
 
-            def GenerateDiffs():
-                subprocess.run(['make', 'clean'], cwd=subdirectory, capture_output=True).check_returncode()
-                subprocess.run(['make'], cwd=subdirectory, capture_output=True).check_returncode()
-                completed_process = subprocess.run(['./main'], cwd=subdirectory, capture_output=True)
-                completed_process.check_returncode()
-                output = completed_process.stdout.decode()
-                output = parse_project_output(output).splitlines()
-                title = f'<h4>{dirname}</h4>'
+        def GenerateDiffs():
+            subprocess.run(['make', 'clean'], cwd=dir_path, capture_output=True, text=True).check_returncode()
+            subprocess.run(['make'], cwd=dir_path, capture_output=True, text=True).check_returncode()
 
-                def GenerateTables() -> str:
-                    tables: list[str] = []
-                    for test in tests:
-                        for idx, expected in enumerate(test.expected):
-                            t = HtmlDiff().make_table(output, expected, f'{test.id}_output', f'{test.id}_expected_{idx}')
-                            tables.append(t)
-                    return '<br/>'.join(tables)
-                tables = GenerateTables()
-                return title + tables
-            diffs = GenerateDiffs()
-            html_content = HTML_CONTENT.replace('#DIFFS', diffs)
-            with open(f'diffs.html', 'w') as f:
-                f.write(html_content)
+            def GenerateTables() -> str:
+                tables: list[str] = []
+                for test in tests:
+                    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as input:
+                        input.write(test.input)
+                        input.flush()  # important
+                        completed_process = subprocess.run(['./main', f'{input.name}'], cwd=dir_path, capture_output=True, text=True)
+                    # completed_process.check_returncode()
+                    output = completed_process.stdout
+                    output = parse_project_output(output).splitlines()
+                    for idx, expected in enumerate(test.expected):
+                        t = HtmlDiff().make_table(output, expected, f'{test.id}_output', f'{test.id}_expected_{idx}')
+                        tables.append(t)
+                return '<br/>'.join(tables)
+            title = f'<h4>{dir_name}</h4>'
+            tables = GenerateTables()
+            return title + tables
+        diffs = GenerateDiffs()
+        submissions.append(diffs)
+    html_content = HTML_CONTENT.replace('#DIFFS', '\n'.join(submissions))
+    with open(f'diffs.html', 'w') as f:
+        f.write(html_content)
 
 
 if __name__ == "__main__":
