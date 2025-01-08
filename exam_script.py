@@ -26,6 +26,7 @@ END
 """
 
 
+import os
 import yaml
 import subprocess
 from dataclasses import dataclass
@@ -68,7 +69,7 @@ HTML_CONTENT = """
                   </table></td> </tr>
     </table>
     <br/>
-    #DIFF_TABLES
+    #DIFFS
 </body>
 </html>
 """
@@ -122,6 +123,7 @@ DEBUG_OUTPUT = """
         DONE
 """
 
+ROOT = 'Submissions'
 
 Lines = list[str]
 
@@ -156,34 +158,47 @@ def main():
         args = parser.parse_args()
         return args.executable, args.tests_file
     executable, tests_file = parse_args()
-    with open(tests_file, 'r') as f:
-        data = yaml.safe_load(f)
 
-        def parse_tests(data) -> list[Test]:
-            tests = []
-            for test_data in data['tests']:
-                test = Test(test_data['id'], test_data['input'], [''],
-                            [parse_project_output(expected_item).splitlines() for expected_item in test_data['expected']])
-                tests.append(test)
-            return tests
-        tests: list[Test] = parse_tests(data)
+    def LoadYAMLFile(path: str) -> dict:
+        with open(path, 'r') as f:
+            return yaml.safe_load(f)
+    data = LoadYAMLFile(tests_file)
 
-    diff_tables: list[str] = []
-    for test in tests:
-        # completed_proc = subprocess.run([executable, test.input], capture_output=True)
-        # completed_proc.check_returncode()
-        # output = completed_proc.stdout.decode()
-        output = DEBUG_OUTPUT
-        output = parse_project_output(output).splitlines()
-        for idx, expected in enumerate(test.expected):
-            # diff_html_str = HtmlDiff().make_file(output, expected, 'output', 'expected')
-            t = HtmlDiff().make_table(output, expected, f'{test.id}_output', f'{test.id}_expected_{idx}')
-            diff_tables.append(t)
-        # similarity_ratio = SequenceMatcher(None, output, expected).ratio() * 100
+    def parse_tests(data) -> list[Test]:
+        tests = []
+        for test_data in data['tests']:
+            test = Test(test_data['id'], test_data['input'], [''],
+                        [parse_project_output(expected_item).splitlines() for expected_item in test_data['expected']])
+            tests.append(test)
+        return tests
+    tests: list[Test] = parse_tests(data)
 
-    html_content = HTML_CONTENT.replace('#DIFF_TABLES', '<br/>'.join(diff_tables))
-    with open(f'diffs.html', 'w') as f:
-        f.write(html_content)
+    for dirpath, dirnames, filenames in os.walk(ROOT):
+        for dirname in dirnames:
+            subdirectory = os.path.join(dirpath, dirname)
+
+            def GenerateDiffs():
+                subprocess.run(['make', 'clean'], cwd=subdirectory, capture_output=True).check_returncode()
+                subprocess.run(['make'], cwd=subdirectory, capture_output=True).check_returncode()
+                completed_process = subprocess.run(['./main'], cwd=subdirectory, capture_output=True)
+                completed_process.check_returncode()
+                output = completed_process.stdout.decode()
+                output = parse_project_output(output).splitlines()
+                title = f'<h4>{dirname}</h4>'
+
+                def GenerateTables() -> str:
+                    tables: list[str] = []
+                    for test in tests:
+                        for idx, expected in enumerate(test.expected):
+                            t = HtmlDiff().make_table(output, expected, f'{test.id}_output', f'{test.id}_expected_{idx}')
+                            tables.append(t)
+                    return '<br/>'.join(tables)
+                tables = GenerateTables()
+                return title + tables
+            diffs = GenerateDiffs()
+            html_content = HTML_CONTENT.replace('#DIFFS', diffs)
+            with open(f'diffs.html', 'w') as f:
+                f.write(html_content)
 
 
 if __name__ == "__main__":
