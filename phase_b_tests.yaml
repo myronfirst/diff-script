@@ -1,0 +1,39 @@
+---
+tests:
+  - id: s_existing_sid
+    input: |
+      A 2 0
+      D 0 10
+      S 0 0
+      S 0 0
+    expected:
+      - |
+        A
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 0 0
+          Stations [0]
+          0
+        DONE
+        S 0 0
+        DONE
+      - |
+        A
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 0 0
+          Stations [0]
+          0
+        DONE
+  - id: test1
+    input: |
+      Input for test1.
+    expected:
+      - |
+        Expected output for test1.
