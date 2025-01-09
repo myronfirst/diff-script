@@ -5,35 +5,29 @@ tests:
       A 2 1
       D 0 10
       S 1 0
-    #     S 1 0
+      S 1 0
     expected:
       - |
-        A
+        A 2 1
         DONE
         D 0 10
           Districts
           0
         DONE
-        S 0 0
-          Stations [0]
-          0
-        DONE
-        S 0 0
+        S 1 0
+          Stations[1]
+          1
         DONE
       - |
-        A
+        A 2 1
         DONE
         D 0 10
           Districts
           0
         DONE
-        S 0 0
-          Stations [0]
-          0
+        S 1 0
+          Stations[1]
+          1
         DONE
-  # - id: test1
-  #   input: |
-  #     Input for test1.
-  #   expected:
-  #     - |
-  #       Expected output for test1.
+        S 1 0
+        DONE

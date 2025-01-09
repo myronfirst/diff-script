@@ -2,7 +2,7 @@
 
 - Create virtual environment
 - Activate virtual environment
-- Install Dependencies
+- Install dependencies
 
 On Windows
 
