@@ -48,7 +48,7 @@ The script traverses this sub-directory structure and on each one performs the c
 - for each test_input in the tests collection
   - `./main test_input`
 
-The output of each project is captured and compared with the expected test output.  
+The output of the `main` executable is captured and compared with the expected test output.  
 An output .html file is produced (default value: `Diffs.html`), containing the line-by-line output-expected comparisons for each test  
 
 **Drag-n-drop `Diffs.html` to a browser to interpret the results**  
