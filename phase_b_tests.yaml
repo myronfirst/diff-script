@@ -1,6 +1,79 @@
 ---
 tests:
-  - id: s_existing_sid
+  - id: d_standard
+    input: |
+      A 0 0
+      D 4 10
+      D 6 10
+      D 2 10
+    expected:
+      - |
+        A 0 0
+        DONE
+        D 4 10
+          Districts
+          4
+        DONE
+        D 6 10
+          Districts
+          4 6
+        DONE
+        D 2 10
+          Districts
+          4 6 2
+        DONE
+  - id: d_duplicate
+    input: |
+      A 0 0
+      D 0 10
+      D 0 10
+    expected:
+      - |
+        A 0 0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+      - |
+        A 0 0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+  - id: s_standard
+    input: |
+      A 3 6
+      D 0 10
+      S 4 0
+      S 6 0
+      S 2 0
+    expected:
+      - |
+        A 3 6
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 4 0
+          Stations[0]
+          4
+        DONE
+        S 6 0
+          Stations[2]
+          6
+        DONE
+        S 2 0
+          Stations[2]
+          2 6
+        DONE
+  - id: s_duplicate
     input: |
       A 2 1
       D 0 10
@@ -30,4 +103,216 @@ tests:
           1
         DONE
         S 1 0
+          Stations[1]
+          1
+        DONE
+  - id: r_standard
+    input: |
+      A 1 1
+      D 0 10
+      S 1 0
+      R 4 1
+      R 6 1
+      R 2 1
+    expected:
+      - |
+        A 1 1
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 1 0
+          Stations[1]
+          1
+        DONE
+        R 4 1
+          Voters[1]
+          4
+        DONE
+        R 6 1
+          Voters[1]
+          6 4
+        DONE
+        R 2 1
+          Voters[1]
+          6 4 2
+        DONE
+  - id: r_duplicate
+    input: |
+      A 1 1
+      D 0 10
+      S 1 0
+      R 1 1
+      R 1 1
+    expected:
+      - |
+        A 1 1
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 1 0
+          Stations[1]
+          1
+        DONE
+        R 1 1
+          Voters[1]
+          1
+        DONE
+      - |
+        A 1 1
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 1 0
+          Stations[1]
+          1
+        DONE
+        R 1 1
+          Voters[1]
+          1
+        DONE
+        R 1 1
+          Voters[1]
+          1
+        DONE
+  - id: c_standard
+    input: |
+      A 0 0
+      D 0 10
+      C 4 0 0
+      C 6 0 0
+      C 2 0 0
+    expected:
+      - |
+        A 0 0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        C 4 0 0
+          Candidates[0]
+          4 0
+        DONE
+        C 6 0 0
+          Candidates[0]
+          4 0
+          6 0
+        DONE
+        C 2 0 0
+          Candidates[0]
+          2 0
+          4 0
+          6 0
+        DONE
+  - id: c_duplicate
+    input: |
+      A 0 0
+      D 0 10
+      C 1 0 0
+      C 1 0 0
+    expected:
+      - |
+        A 0 0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        C 1 0 0
+          Candidates[0]
+          1 0
+        DONE
+      - |
+        A 0 0
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        C 1 0 0
+          Candidates[0]
+          1 0
+        DONE
+        C 1 0 0
+          Candidates[0]
+          1 0
+        DONE
+  - id: v_standard
+    input: |
+      A 2 2
+      D 1 10
+      D 2 10
+      S 1 1
+      S 2 2
+      C 1 1 1
+      C 2 2 2
+      V 6 1 1 1
+      V 4 1 1 1
+      V 2 2 2 2
+    expected:
+      - |
+        A 2 2
+        DONE
+        D 1 10
+          Districts
+          1
+        DONE
+        D 2 10
+          Districts
+          1 2
+        DONE
+        S 1 1
+          Stations[1]
+          1
+        DONE
+        S 2 2
+          Stations[0]
+          2
+        DONE
+        C 1 1
+          Candidates[1]
+          1 1
+        DONE
+        C 2 2
+          Candidates[2]
+          2 2
+        DONE
+        V 6 1 1 1
+          District[1]
+          blanks 0
+          invalids 0
+          partyVotes
+          0 0
+          1 1
+          2 0
+          3 0
+          4 0
+        DONE
+        V 4 1 1 1
+          District[1]
+          blanks 0
+          invalids 0
+          partyVotes
+          0 0
+          1 2
+          2 0
+          3 0
+          4 0
+        DONE
+        V 2 2 2 2
+          District[2]
+          blanks 0
+          invalids 0
+          partyVotes
+          0 0
+          1 0
+          2 1
+          3 0
+          4 0
         DONE
