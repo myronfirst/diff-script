@@ -2,7 +2,7 @@
 
 A script to assist in the procedure of checking test outputs for line differences.  
 This tool is meant to compliment parts of the grading process, not replace them.  
-Critical thinking is required while using this tool.
+Critical thinking is required while using this tool.  
 Do not blindly trust the produced results.  
 
 ## Setup
