@@ -12,16 +12,6 @@ Do not blindly trust the produced results.
 - Activate virtual environment
 - Install dependencies
 
-On Windows
-
-```
-git clone https://github.com/myronfirst/diff-script.git
-cd diff-script
-python3 -m venv .venv
-./.venv/bin/activate
-python3 -m pip install -r requirements.txt
-```
-
 On Linux
 
 ```
