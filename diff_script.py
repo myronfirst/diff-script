@@ -144,10 +144,19 @@ def error_occured(err: bool, msg: str):
 def run_process(args: list[str], cwd: str) -> str:
     try:
         # The process is run with stdout/stderr buffering disabled in order to capture the output in real-time
-        completed_process = subprocess.run(['stdbuf', '-o0', '-e0'] + args, cwd=cwd, capture_output=True, text=True, check=True)
+        completed_process = subprocess.run(
+            ['stdbuf', '-o0', '-e0'] + args, cwd=cwd, capture_output=True, text=True, check=True, timeout=2.0)
         return completed_process.stdout
     except subprocess.CalledProcessError as e:
-        return e.stdout + f'\n{signal.strsignal(abs(e.returncode))}'
+        out = ''
+        if e.stdout is not None:
+            out = e.stdout
+        return out + f'\n{signal.strsignal(abs(e.returncode))}'
+    except subprocess.TimeoutExpired as e:
+        out = ''
+        if e.stdout is not None:
+            out = e.stdout.decode()
+        return out + f'\n{e.timeout} sec timeout expired'
 
 
 def generate_completed_tests(tests: list[Test], submission_directories: list[str]) -> list[CompletedTest]:
@@ -190,6 +199,8 @@ def generate_html_file(completed_tests: list[CompletedTest]):
 
 
 def main():
+    if error_occured(file_not_found(f'{ROOT}'), f'{ROOT} directory not found, exiting...'):
+        return
     test_collection_file_path: str = parse_args()
     test_collection_yaml = load_test_collection_yaml(test_collection_file_path)
     tests: list[Test] = parse_tests(test_collection_yaml)

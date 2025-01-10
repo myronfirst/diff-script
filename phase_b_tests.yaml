@@ -250,10 +250,13 @@ tests:
       D 2 10
       S 1 1
       S 2 2
+      R 4 1
+      R 6 1
+      R 2 2
       C 1 1 1
       C 2 2 2
-      V 6 1 1 1
       V 4 1 1 1
+      V 6 1 1 1
       V 2 2 2 2
     expected:
       - |
@@ -275,15 +278,27 @@ tests:
           Stations[0]
           2
         DONE
-        C 1 1
+        R 4 1
+          Voters[1]
+          4
+        DONE
+        R 6 1
+          Voters[1]
+          6 4
+        DONE
+        R 2 2
+          Voters[2]
+          2
+        DONE
+        C 1 1 1
           Candidates[1]
           1 1
         DONE
-        C 2 2
+        C 2 2 2
           Candidates[2]
           2 2
         DONE
-        V 6 1 1 1
+        V 4 1 1 1
           District[1]
           blanks 0
           invalids 0
@@ -294,7 +309,7 @@ tests:
           3 0
           4 0
         DONE
-        V 4 1 1 1
+        V 6 1 1 1
           District[1]
           blanks 0
           invalids 0
@@ -315,4 +330,127 @@ tests:
           2 1
           3 0
           4 0
+        DONE
+  - id: v_blank
+    input: |
+      A 1 1
+      D 1 10
+      S 1 1
+      R 1 1
+      V 1 1 -1 1
+    expected:
+      - |
+        A 1 1
+        DONE
+        D 1 10
+          Districts
+          1
+        DONE
+        S 1 1
+          Stations[1]
+          1
+        DONE
+        R 1 1
+          Voters[1]
+          1
+        DONE
+        V 1 1 -1 1
+          District[1]
+          blanks 1
+          invalids 0
+          partyVotes
+          0 0
+          1 0
+          2 0
+          3 0
+          4 0
+        DONE
+  - id: v_invalid
+    input: |
+      A 1 1
+      D 1 10
+      S 1 1
+      R 1 1
+      V 1 1 -2 1
+    expected:
+      - |
+        A 1 1
+        DONE
+        D 1 10
+          Districts
+          1
+        DONE
+        S 1 1
+          Stations[1]
+          1
+        DONE
+        R 1 1
+          Voters[1]
+          1
+        DONE
+        V 1 1 -2 1
+          District[1]
+          blanks 0
+          invalids 1
+          partyVotes
+          0 0
+          1 0
+          2 0
+          3 0
+          4 0
+        DONE
+    # - id: m_standard
+    # input: |
+    #   A 1 1
+    #   D 1 10
+    #   S 1 1
+    #   R 1 1
+    #   V 1 1 -2 1
+    # expected:
+    #   - |
+  - id: bu_standard
+    input: |
+      A 1 1
+      D 0 10
+      S 1 0
+      R 4 1
+      R 6 1
+      R 2 1
+      BU 4 1
+      BU 6 1
+      BU 2 1
+    expected:
+      - |
+        A 1 1
+        DONE
+        D 0 10
+          Districts
+          0
+        DONE
+        S 1 0
+          Stations[1]
+          1
+        DONE
+        R 4 1
+          Voters[1]
+          4
+        DONE
+        R 6 1
+          Voters[1]
+          6 4
+        DONE
+        R 2 1
+          Voters[1]
+          6 4 2
+        DONE
+        BU 4 1
+          Voters[1]
+          6 2
+        DONE
+        BU 6 1
+          Voters[1]
+          2
+        DONE
+        BU 2 1
+          Voters[1]
         DONE
