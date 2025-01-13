@@ -54,4 +54,4 @@ An output .html file is produced (default value: `Diffs.html`), containing the l
 **Drag-n-drop `Diffs.html` to a browser to interpret the results**  
 
 Check `diff_script.py` for parameters documentation.  
-These results are compimentary to the grading process, not a replacement of common logic.
+These results are complimentary to the grading process, not a replacement of common logic.
