@@ -174,3 +174,5 @@ cython_debug/
 Submissions/
 *.html
 5397_A_FASI/
+memory.txt
+*.sh
