@@ -173,6 +173,7 @@ cython_debug/
 .vscode/
 Submissions/
 *.html
+4984_B_FASI/
 5397_A_FASI/
 memory.txt
 *.sh
