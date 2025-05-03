@@ -1,0 +1,22 @@
+---
+tests:
+  - id: N_THREADS=4
+    compile_flags: N_THREADS=4
+    input:
+    expected:
+      - dummy
+  # - id: N_THREADS=8
+  #   compile_flags: -DN_THREADS=8
+  #   input:
+  #   expected:
+  #     - dummy
+  # - id: N_THREADS=16
+  #   compile_flags: -DN_THREADS=16
+  #   input:
+  #   expected:
+  #     - dummy
+  # - id: N_THREADS=80
+  #   compile_flags: -DN_THREADS=16
+  #   input:
+  #   expected:
+  #     - dummy
